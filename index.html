@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/estilos.css">
+    <title>Goalify</title>
+</head>
+<body>
+    <h1>Goalify App</h1>
+
+     <div id="seccion-deslogueado">
+        <h2>Registro</h2>
+        <input type="text" id="email" placeholder="Usuario (email)">
+        <input type="password" id="password" placeholder="Contraseña">
+        <select id="selectPaises">
+            <option value="">Seleccione un país</option>
+        </select>
+        <input type="button" id="btnRegistrar" value="Registrarse">
+
+        <h2>Login</h2>
+        <input type="text" id="emailLogin" placeholder="Usuario (email)">
+        <input type="password" id="passwordLogin" placeholder="Contraseña">
+        <input type="button" id="btnLogin" value="Iniciar sesión">
+    </div>
+
+    <div id="seccion-logueado" style="display: none;">
+        <h2>Bienvenido <span id="nombreUsuario"></span></h2>
+        <input type="button" id="btnLogout" value="Cerrar sesión">
+    </div>
+    
+    <script src="js/clases.js"></script>
+    <script src="js/codigo.js"></script>
+</body>
+</html>
