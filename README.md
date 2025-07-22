@@ -1,4 +1,4 @@
-# Globify_App
+# Goalify_App
 Obligatorio Taller de desarrollo para dispositivos móviles
 
 # Goalify 🚀
