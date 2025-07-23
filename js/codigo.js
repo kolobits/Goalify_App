@@ -5,7 +5,7 @@ inicio();
 
 function inicio() {
   document.querySelector("#btnRegistrar").addEventListener("click", registrar);
-  document.querySelector("#btnLogin").addEventListener("click", login);
+  document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
   // document.querySelector("#btnLogout").addEventListener("click", logout);
   cargarPaises();
 }
@@ -72,13 +72,16 @@ async function registrar() {
       let body = await response.json();
       console.log(body);
 
-      if (body.error !== "") {
-        alert(body.error);
+      if (body.codigo !== 200) {
+        alert(body.mensaje);
       } else {
         localStorage.setItem("token", body.token);
         localStorage.setItem("idUsuario", body.id);
         alert("Registro exitoso");
         document.querySelector("#formRegistro").reset();
+        login(objUsuario.usuario , objUsuario.password)
+        
+
       }
     } catch (error) {
       alert("Hubo un error al registrar el usuario");
@@ -87,9 +90,7 @@ async function registrar() {
   }
 }
 
-async function login() {
-  let usuario = document.querySelector("#usuarioLogin").value;
-  let password = document.querySelector("#passwordLogin").value;
+async function login(usuario , password) {
 
   if (!camposValidos(usuario, password)) {
     alert("Por favor, complete todos los campos");
@@ -119,6 +120,8 @@ async function login() {
         localStorage.setItem("token", body.token);
         localStorage.setItem("idUsuario", body.id);
         alert("Login exitoso");
+        mostarDashboard();
+        document.querySelector("#welcomeUser").innerHTML = `Bienvenid/a ${obj.usuario}!!`
       } else if (body.mensaje) {
         alert("Error al iniciar sesión: " + body.mensaje);
       } else {
@@ -130,8 +133,17 @@ async function login() {
     }
   }
 
+}
+
+function hacerLogin(){
+  let usuario = document.querySelector("#usuarioLogin").value;
+  let password = document.querySelector("#passwordLogin").value;
+
+   login(usuario,password);
 
 }
+
+
 
 function camposValidos(...datos) {
   for (let dato of datos) {
@@ -156,4 +168,9 @@ function mostrarSeccionRegistro() {
 function mostrarSeccionLogin() {
   ocultarTodasLasSecciones();
   document.querySelector("#pantalla-login").style.display = "block";
+}
+
+function mostarDashboard(){
+  ocultarTodasLasSecciones();
+  document.querySelector("#dashboard").style.display = "block";
 }
