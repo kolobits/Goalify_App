@@ -1,4 +1,5 @@
 const URL_BASE = "https://goalify.develotion.com/";
+let token = "";
 
 inicio();
 
@@ -42,45 +43,47 @@ async function cargarPaises() {
   }
 }
 
+
 async function registrar() {
-  let email = document.querySelector("#usuario").value;
-  let pass = document.querySelector("#password").value;
+  let usuario = document.querySelector("#usuario").value;
+  let password = document.querySelector("#password").value;
   let pais = document.querySelector("#selectPaises").value;
+
   if (!camposValidos(usuario, password, pais)) {
     alert("Por favor, complete todos los campos");
   } else {
     let objUsuario = new Usuario(usuario, password, pais);
     console.log(objUsuario);
     console.log(JSON.stringify(objUsuario));
-  }
 
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  const rawBody = JSON.stringify(objUsuario);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const rawBody = JSON.stringify(objUsuario);
 
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: rawBody,
-    redirect: "follow",
-  };
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: rawBody,
+      redirect: "follow",
+    };
 
-  try {
-    let response = await fetch(URL_BASE + "usuarios.php", requestOptions);
-    console.log(response);
+    try {
+      let response = await fetch(URL_BASE + "usuarios.php", requestOptions);
+      let body = await response.json();
+      console.log(body);
 
-    let body = await response.json();
-    console.log(body);
-
-    if (body.error !== "") {
-      alert(body.error);
-    } else {
-      document.querySelector("#formRegistro").reset();
-      alert("Registro exitoso");
+      if (body.error !== "") {
+        alert(body.error);
+      } else {
+        localStorage.setItem("token", body.token);
+        localStorage.setItem("idUsuario", body.id);
+        alert("Registro exitoso");
+        document.querySelector("#formRegistro").reset();
+      }
+    } catch (error) {
+      alert("Hubo un error al registrar el usuario");
+      console.log(error);
     }
-  } catch (error) {
-    console.error("Error al registrar:", error);
-    alert("Hubo un error al registrar el usuario");
   }
 }
 
@@ -110,13 +113,16 @@ async function login() {
     try {
       let response = await fetch(URL_BASE + "login.php", requestOptions);
       let body = await response.json();
+      console.log(body);
 
       if (body.token) {
         localStorage.setItem("token", body.token);
         localStorage.setItem("idUsuario", body.id);
         alert("Login exitoso");
+      } else if (body.mensaje) {
+        alert("Error al iniciar sesión: " + body.mensaje);
       } else {
-        alert("Error al iniciar sesión: " + body.error);
+        alert("Error desconocido al iniciar sesión.");
       }
     } catch (error) {
       alert("Error de conexión al iniciar sesión");
@@ -124,14 +130,16 @@ async function login() {
     }
   }
 
-  function camposValidos(...datos) {
-    for (let dato of datos) {
-      if (dato == null || dato == "") {
-        return false;
-      }
+
+}
+
+function camposValidos(...datos) {
+  for (let dato of datos) {
+    if (dato == null || dato == "") {
+      return false;
     }
-    return true;
   }
+  return true;
 }
 
 function ocultarTodasLasSecciones() {

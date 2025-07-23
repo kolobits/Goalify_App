@@ -1,7 +1,7 @@
 class Usuario{
-    constructor(idPais,nombre, token){
-        this.idPais = idPais;
+    constructor(usuario, password ,pais){
         this.usuario = usuario; 
-        this.token = token;
+        this.password = password;
+        this.pais = parseInt(pais);
     }
 }
