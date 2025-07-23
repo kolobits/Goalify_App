@@ -1,6 +1,6 @@
 class Usuario{
-    constructor(id,nombre, token){
-        this.id = id;
+    constructor(idPais,nombre, token){
+        this.idPais = idPais;
         this.usuario = usuario; 
         this.token = token;
     }
