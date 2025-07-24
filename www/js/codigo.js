@@ -1,5 +1,5 @@
 const URL_BASE = "https://goalify.develotion.com/";
-let token = "";
+
 const MENU = document.querySelector("#menu");
 const ROUTER = document.querySelector("#route");
 const HOME = document.querySelector("#pantalla-home");
@@ -12,7 +12,8 @@ inicio();
 function inicio() {
   ROUTER.addEventListener("ionRouteDidChange", navegar);
   document.querySelector("#logout").addEventListener("click", logout);
- document.querySelector("#btnLogin").addEventListener("click", login);
+  document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
+  document.querySelector("#btnRegistrar").addEventListener("click", registrar);
   armarMenu();
   cargarPaises();
 }
@@ -44,6 +45,23 @@ function navegar(event) {
       break;
   }
 }
+
+async function mostrarAlert({ header = "", subHeader = "", message = "", buttons = ["OK"] }) {
+  const alert = document.querySelector("#alertaGlobal");
+
+  if (!alert) {
+    console.error("el ion-alert no se encuentra")
+    return
+  }
+
+  alert.header = header;
+  alert.subHeader = subHeader
+  alert.message = message;
+  alert.buttons = buttons;
+
+  await alert.present();
+}
+
 
 function armarMenu() {
   let elemsClaseDeslogueado = document.querySelectorAll(".deslogueado");
@@ -107,7 +125,10 @@ async function registrar() {
   let pais = document.querySelector("#selectPaises").value;
 
   if (!camposValidos(usuario, password, pais)) {
-    alert("Por favor, complete todos los campos");
+    await mostrarAlert({
+      header: "Por favor completa todos los campos",
+      message: "Revisar los datos."
+    })
   } else {
     let objUsuario = new Usuario(usuario, password, pais);
     console.log(objUsuario);
@@ -130,12 +151,22 @@ async function registrar() {
       console.log(body);
 
       if (body.codigo !== 200) {
-        alert(body.mensaje);
+        await mostrarAlert({
+          header: "Error",
+          subHeader: "Revisar los datos",
+          message: body.mensaje || 'Ocurrió un error inesperado'
+        })
       } else {
         localStorage.setItem("token", body.token);
         localStorage.setItem("idUsuario", body.id);
-        alert("Registro exitoso");
-        document.querySelector("#formRegistro").reset();
+        await mostrarAlert({
+          header: "Registro exitoso",
+          subHeader: "Bienvenido",
+          message: "Tu cuenta fue creada correctamente"
+        })
+
+        document.querySelector('#usuario').value = '';
+        document.querySelector('#password').value = '';
         login(objUsuario.usuario, objUsuario.password);
       }
     } catch (error) {
@@ -146,55 +177,77 @@ async function registrar() {
 }
 
 async function login(usuario, password) {
-  if (!camposValidos(usuario, password)) {
-    alert("Por favor, complete todos los campos");
-  } else {
-    let obj = {};
-    obj.usuario = usuario;
-    obj.password = password;
+  let obj = {};
+  obj.usuario = usuario;
+  obj.password = password;
 
-    console.log(obj);
-    console.log(JSON.stringify(obj));
+  console.log(obj);
+  console.log(JSON.stringify(obj));
 
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const rawBody = JSON.stringify(obj);
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: rawBody,
-      redirect: "follow",
-    };
-    try {
-      let response = await fetch(URL_BASE + "login.php", requestOptions);
-      let body = await response.json();
-      console.log(body);
-
-      if (body.token) {
-        localStorage.setItem("token", body.token);
-        localStorage.setItem("idUsuario", body.id);
-        alert("Login exitoso");
-        mostarDashboard();
-        document.querySelector(
-          "#welcomeUser"
-        ).innerHTML = `Bienvenid/a ${obj.usuario}!!`;
-      } else if (body.mensaje) {
-        alert("Error al iniciar sesión: " + body.mensaje);
-      } else {
-        alert("Error desconocido al iniciar sesión.");
-      }
-    } catch (error) {
-      alert("Error de conexión al iniciar sesión");
-      console.log(error);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  const rawBody = JSON.stringify(obj);
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: rawBody,
+    redirect: "follow",
+  };
+  try {
+    let response = await fetch(URL_BASE + "login.php", requestOptions);
+    let body = await response.json();
+    console.log(body);
+    if (body.token) {
+      // Login exitoso
+      localStorage.setItem("token", body.token);
+      localStorage.setItem("idUsuario", body.id);
+    } else if (body.mensaje) {
+      body.codigo = 400;
+    } else {
+      body.mensaje = "Ocurrió un error inesperado";
     }
+
+    return body
+
+  } catch (error) {
+    /// Error al hacer login
+    console.log(error);
   }
 }
 
-function hacerLogin() {
+
+async function hacerLogin() {
   let usuario = document.querySelector("#usuarioLogin").value;
   let password = document.querySelector("#passwordLogin").value;
+  if (!camposValidos(usuario, password)) {
+    await mostrarAlert({
+      header: "Por favor completa todos los campos",
+      message: "Revisar los datos."
+    })
+    return;
+}
+  try {
+    const resultado = await login(usuario, password)
 
-  login(usuario, password);
+    if (resultado.codigo === 200) {
+      await mostrarAlert({
+        header: "Login exitoso",
+        message: resultado.mensaje || "Has iniciado sesion correctamente"
+      });
+    } else {
+      await mostrarAlert({
+        header: "Error de login",
+        message: resultado.mensaje || "Credenciales inválidas."
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    await mostrarAlert({
+      header: 'Error',
+      message: 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo '
+    });
+  }
+
 }
 
 function camposValidos(...datos) {

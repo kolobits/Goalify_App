@@ -72,7 +72,7 @@
         <ion-list>
           <ion-item>
             <ion-input label="Usuario" label-placement="floating" placeholder="Ingrese el usuario"
-              id="emailLogin"></ion-input>
+              id="usuarioLogin"></ion-input>
           </ion-item>
           <ion-item>
             <ion-input label="Contraseña" label-placement="floating" placeholder="Ingrese la constraseña"
@@ -107,14 +107,12 @@
           <ion-item>
             <ion-select label="Seleccione un país" label-placement="floating" placeholder="Seleccione un país"
               id="selectPaises">
-              <ion-select-option value="apple">Apple</ion-select-option>
-              <ion-select-option value="banana">Banana</ion-select-option>
-              <ion-select-option value="orange">Orange</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-list>
         <ion-button expand="full" id="btnRegistrar">Registrarse</ion-button>
       </ion-content>
+
     </page-registro>
 
     <page-dashboard class="ion-page" id="pantalla-dashboard">
@@ -129,10 +127,11 @@
       </ion-content>
     </page-dashboard>
 
-  </ion-app>
+    <!-- ALERT GENERAL -->
+    <ion-alert id="alertaGlobal"></ion-alert>
 
-  <script src="js/clases.js"></script>
-  <script src="js/codigo.js"></script>
+    <script src="js/clases.js"></script>
+    <script src="js/codigo.js"></script>
 </body>
 
 </html>
