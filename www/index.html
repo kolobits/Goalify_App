@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/estilos.css" />
   <title>Goalify</title>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
@@ -44,7 +43,7 @@
     </div>
 
     <!-- PANTALLAS -->
-
+    <!-- INICIO -->
     <page-home class="ion-page" id="pantalla-home">
       <ion-header>
         <ion-toolbar>
@@ -54,9 +53,12 @@
           <ion-title>Home</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding"> Pantalla de inicio </ion-content>
+      <ion-content class="ion-padding">
+        Pantalla de inicio
+      </ion-content>
     </page-home>
 
+    <!-- LOGIN -->
     <page-login class="ion-page" id="pantalla-login">
       <ion-header>
         <ion-toolbar>
@@ -66,9 +68,22 @@
           <ion-title>Login</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding"> Pantalla de login </ion-content>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item>
+            <ion-input label="Usuario" label-placement="floating" placeholder="Ingrese el usuario"
+              id="emailLogin"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Contraseña" label-placement="floating" placeholder="Ingrese la constraseña"
+              id="passwordLogin"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="full" id="btnLogin">Login</ion-button>
+      </ion-content>
     </page-login>
 
+    <!-- REGISTRO -->
     <page-registro class="ion-page" id="pantalla-registro">
       <ion-header>
         <ion-toolbar>
@@ -78,7 +93,28 @@
           <ion-title>Registro</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding"> Pantalla de registro </ion-content>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item>
+            <ion-input label="Usuario" label-placement="floating" placeholder="Ingrese el usuario"
+              id="usuario"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Contraseña" label-placement="floating" placeholder="Ingrese la constraseña"
+              id="password"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-select label="Seleccione un país" label-placement="floating" placeholder="Seleccione un país"
+              id="selectPaises">
+              <ion-select-option value="apple">Apple</ion-select-option>
+              <ion-select-option value="banana">Banana</ion-select-option>
+              <ion-select-option value="orange">Orange</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="full" id="btnRegistrar">Registrarse</ion-button>
+      </ion-content>
     </page-registro>
 
     <page-dashboard class="ion-page" id="pantalla-dashboard">
@@ -90,7 +126,7 @@
           <ion-title>Dashboard</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding"> Pantalla de dashboard </ion-content>
+      </ion-content>
     </page-dashboard>
 
   </ion-app>
@@ -99,4 +135,4 @@
   <script src="js/codigo.js"></script>
 </body>
 
-</html> 
+</html>
