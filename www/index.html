@@ -18,7 +18,7 @@
       <ion-route url="/" component="page-home"></ion-route>
       <ion-route url="/login" component="page-login"></ion-route>
       <ion-route url="/registro" component="page-registro"></ion-route>
-      <ion-route url="/dashboard" component="page-dashboard"></ion-route>
+      <ion-route url="/agregarEvaluacion" component="page-agregarEvaluacion"></ion-route>
     </ion-router>
     <ion-nav id="nav"></ion-nav>
 
@@ -34,7 +34,7 @@
         <ion-item href="/" class="logueado deslogueado">Home</ion-item>
         <ion-item href="/login" class="deslogueado">Login</ion-item>
         <ion-item href="/registro" class="deslogueado">Registro</ion-item>
-        <ion-item href="/dashboard">Dashboard</ion-item>
+        <ion-item href="/agregarEvaluacion" class="logueado">Agregar Evaluacion</ion-item>
         <ion-item id="logout" class="logueado">Logout</ion-item>
       </ion-content>
     </ion-menu>
@@ -115,17 +115,28 @@
 
     </page-registro>
 
-    <page-dashboard class="ion-page" id="pantalla-dashboard">
+    <!-- Agregar Evaluacion -->
+    <page-agregarEvaluacion class="ion-page" id="pantalla-agregarEvaluacion">
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>Dashboard</ion-title>
+          <ion-title>Agregar una evaluacion</ion-title>
         </ion-toolbar>
       </ion-header>
-      </ion-content>
-    </page-dashboard>
+      </ion-content class="ion-padding">
+      <ion-list>
+        <ion-item>
+          <ion-select label="Floating label" label-placement="floating">
+            <ion-select-option value="apple">Apple</ion-select-option>
+            <ion-select-option value="banana">Banana</ion-select-option>
+            <ion-select-option value="orange">Orange</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+      </ion-list>
+    </page-agregarEvaluacion>
 
     <!-- ALERT GENERAL -->
     <ion-alert id="alertaGlobal"></ion-alert>

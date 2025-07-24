@@ -5,7 +5,7 @@ const ROUTER = document.querySelector("#route");
 const HOME = document.querySelector("#pantalla-home");
 const LOGIN = document.querySelector("#pantalla-login");
 const REGISTRO = document.querySelector("#pantalla-registro");
-const DASHBOARD = document.querySelector("#pantalla-dashboard");
+const AGREGAREVALUACION = document.querySelector("#pantalla-agregarEvaluacion");
 const NAV = document.querySelector("ion-nav");
 inicio();
 
@@ -201,6 +201,7 @@ async function login(usuario, password) {
       // Login exitoso
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
+       NAV.push("page-agregarEvaluacion");
     } else if (body.mensaje) {
       body.codigo = 400;
     } else {
@@ -211,6 +212,7 @@ async function login(usuario, password) {
 
   } catch (error) {
     /// Error al hacer login
+  
     console.log(error);
   }
 }
@@ -263,13 +265,14 @@ function ocultarPantallas() {
   HOME.style.display = "none";
   LOGIN.style.display = "none";
   REGISTRO.style.display = "none";
-  DASHBOARD.style.display = "none";
+  AGREGAREVALUACION.style.display = "none";
 }
 
 function ocultarTodasLasSecciones() {
   document.querySelector("#pantalla-registro").style.display = "none";
   document.querySelector("#pantalla-login").style.display = "none";
   document.querySelector("#pantalla-principal").style.display = "none";
+  document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
 }
 
 function mostrarSeccionRegistro() {
@@ -282,7 +285,7 @@ function mostrarSeccionLogin() {
   document.querySelector("#pantalla-login").style.display = "block";
 }
 
-function mostrarDashboard() {
+function mostrarAgregarEvaluacion() {
   ocultarTodasLasSecciones();
-  document.querySelector("#dashboard").style.display = "block";
+  document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
 }
