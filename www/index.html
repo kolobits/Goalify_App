@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/estilos.css" />
+  <title>Goalify</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+</head>
+
+<body>
+  <ion-app>
+
+    <!-- RUTEO -->
+    <ion-router id="route">
+      <ion-route url="/" component="page-home"></ion-route>
+      <ion-route url="/login" component="page-login"></ion-route>
+      <ion-route url="/registro" component="page-registro"></ion-route>
+      <ion-route url="/dashboard" component="page-dashboard"></ion-route>
+    </ion-router>
+    <ion-nav id="nav"></ion-nav>
+
+
+    <!-- MENU -->
+    <ion-menu content-id="main-content" id="menu">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Menu</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item href="/" class="logueado deslogueado">Home</ion-item>
+        <ion-item href="/login" class="deslogueado">Login</ion-item>
+        <ion-item href="/registro" class="deslogueado">Registro</ion-item>
+        <ion-item href="/dashboard">Dashboard</ion-item>
+        <ion-item id="logout" class="logueado">Logout</ion-item>
+      </ion-content>
+    </ion-menu>
+    <div class="ion-page" id="main-content">
+
+    </div>
+
+    <!-- PANTALLAS -->
+
+    <page-home class="ion-page" id="pantalla-home">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Home</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding"> Pantalla de inicio </ion-content>
+    </page-home>
+
+    <page-login class="ion-page" id="pantalla-login">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Login</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding"> Pantalla de login </ion-content>
+    </page-login>
+
+    <page-registro class="ion-page" id="pantalla-registro">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Registro</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding"> Pantalla de registro </ion-content>
+    </page-registro>
+
+    <page-dashboard class="ion-page" id="pantalla-dashboard">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Dashboard</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding"> Pantalla de dashboard </ion-content>
+    </page-dashboard>
+
+  </ion-app>
+
+  <script src="js/clases.js"></script>
+  <script src="js/codigo.js"></script>
+</body>
+
+</html> 

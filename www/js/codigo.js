@@ -1,13 +1,74 @@
 const URL_BASE = "https://goalify.develotion.com/";
 let token = "";
-
+const MENU = document.querySelector("#menu");
+const ROUTER = document.querySelector("#route");
+const HOME = document.querySelector("#pantalla-home");
+const LOGIN = document.querySelector("#pantalla-login");
+const REGISTRO = document.querySelector("#pantalla-registro");
+const DASHBOARD = document.querySelector("#pantalla-dashboard");
+const NAV = document.querySelector("ion-nav");
 inicio();
 
 function inicio() {
-  document.querySelector("#btnRegistrar").addEventListener("click", registrar);
-  document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
+  ROUTER.addEventListener("ionRouteDidChange", navegar);
+  ROUTER.addEventListener("ionRouteDidChange", navegar);
+  document.querySelector("#logout").addEventListener("click", logout);
+ // document.querySelector("#btnRegistrar").addEventListener("click", registrar);
+  //document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
   // document.querySelector("#btnLogout").addEventListener("click", logout);
+  armarMenu();
   cargarPaises();
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  armarMenu();
+  MENU.close();
+  NAV.push("page-home");
+}
+
+
+function navegar(event) {
+  let ruta = event.detail.to;
+  ocultarPantallas();
+  MENU.close();
+  switch (ruta) {
+    case "/":
+      HOME.style.display = "block";
+      break;
+    case "/login":
+      LOGIN.style.display = "block";
+      break;
+    case "/registro":
+      REGISTRO.style.display = "block";
+      break;
+    case "/dashboard":
+      DASHBOARD.style.display = "block";
+      break;
+  }
+}
+
+function armarMenu() {
+  let elemsClaseDeslogueado = document.querySelectorAll(".deslogueado");
+  let elemsClaseLogueado = document.querySelectorAll(".logueado");
+
+  for (let elem of elemsClaseDeslogueado) {
+    elem.style.display = "none";
+  }
+  for (let elem of elemsClaseLogueado) {
+    elem.style.display = "none";
+  }
+
+  let estoyLogueado = localStorage.getItem("token") != null;
+  if (estoyLogueado) {
+    for (let elem of elemsClaseLogueado) {
+      elem.style.display = "block";
+    }
+  } else {
+    for (let elem of elemsClaseDeslogueado) {
+      elem.style.display = "block";
+    }
+  }
 }
 
 async function cargarPaises() {
@@ -42,7 +103,6 @@ async function cargarPaises() {
     console.log(error);
   }
 }
-
 
 async function registrar() {
   let usuario = document.querySelector("#usuario").value;
@@ -79,9 +139,7 @@ async function registrar() {
         localStorage.setItem("idUsuario", body.id);
         alert("Registro exitoso");
         document.querySelector("#formRegistro").reset();
-        login(objUsuario.usuario , objUsuario.password)
-        
-
+        login(objUsuario.usuario, objUsuario.password);
       }
     } catch (error) {
       alert("Hubo un error al registrar el usuario");
@@ -90,8 +148,7 @@ async function registrar() {
   }
 }
 
-async function login(usuario , password) {
-
+async function login(usuario, password) {
   if (!camposValidos(usuario, password)) {
     alert("Por favor, complete todos los campos");
   } else {
@@ -121,7 +178,9 @@ async function login(usuario , password) {
         localStorage.setItem("idUsuario", body.id);
         alert("Login exitoso");
         mostarDashboard();
-        document.querySelector("#welcomeUser").innerHTML = `Bienvenid/a ${obj.usuario}!!`
+        document.querySelector(
+          "#welcomeUser"
+        ).innerHTML = `Bienvenid/a ${obj.usuario}!!`;
       } else if (body.mensaje) {
         alert("Error al iniciar sesión: " + body.mensaje);
       } else {
@@ -132,18 +191,14 @@ async function login(usuario , password) {
       console.log(error);
     }
   }
-
 }
 
-function hacerLogin(){
+function hacerLogin() {
   let usuario = document.querySelector("#usuarioLogin").value;
   let password = document.querySelector("#passwordLogin").value;
 
-   login(usuario,password);
-
+  login(usuario, password);
 }
-
-
 
 function camposValidos(...datos) {
   for (let dato of datos) {
@@ -152,6 +207,13 @@ function camposValidos(...datos) {
     }
   }
   return true;
+}
+
+function ocultarPantallas() {
+  HOME.style.display = "none";
+  LOGIN.style.display = "none";
+  REGISTRO.style.display = "none";
+  DASHBOARD.style.display = "none";
 }
 
 function ocultarTodasLasSecciones() {
@@ -170,7 +232,7 @@ function mostrarSeccionLogin() {
   document.querySelector("#pantalla-login").style.display = "block";
 }
 
-function mostarDashboard(){
+function mostrarDashboard() {
   ocultarTodasLasSecciones();
   document.querySelector("#dashboard").style.display = "block";
 }
