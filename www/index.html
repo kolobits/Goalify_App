@@ -115,27 +115,37 @@
 
     </page-registro>
 
-    <!-- Agregar Evaluacion -->
+    <!--EVALUACIÓN -->
     <page-agregarEvaluacion class="ion-page" id="pantalla-agregarEvaluacion">
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>Agregar una evaluacion</ion-title>
+          <ion-title>Agregar una evaluación</ion-title>
         </ion-toolbar>
       </ion-header>
-      </ion-content class="ion-padding">
-      <ion-list>
-        <ion-item>
-          <ion-select label="Floating label" label-placement="floating">
-            <ion-select-option value="apple">Apple</ion-select-option>
-            <ion-select-option value="banana">Banana</ion-select-option>
-            <ion-select-option value="orange">Orange</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
-      </ion-list>
+
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item>
+            <ion-select id="selectObjetivo" label="Objetivo" label-placement="floating"
+              placeholder="Seleccione un objetivo">
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-input type="number" id="calificacion" label="Calificación" label-placement="floating" min="-5"
+              max="5" placeholder="Entre -5 y 5"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-datetime id="fecha" presentation="date" label="Fecha" label-placement="floating"></ion-datetime>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="full" id="btnGuardarEvaluacion">Guardar evaluación</ion-button>
+      </ion-content>
     </page-agregarEvaluacion>
 
     <!-- ALERT GENERAL -->
