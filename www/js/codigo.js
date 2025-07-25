@@ -9,6 +9,9 @@ const AGREGAREVALUACION = document.querySelector("#pantalla-agregarEvaluacion");
 const NAV = document.querySelector("ion-nav");
 inicio();
 
+let objetivos = [];
+
+
 function inicio() {
   ROUTER.addEventListener("ionRouteDidChange", navegar);
   document.querySelector("#logout").addEventListener("click", logout);
@@ -17,6 +20,8 @@ function inicio() {
   document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);
   armarMenu();
   cargarPaises();
+
+
 }
 
 function logout() {
@@ -201,6 +206,7 @@ async function login(usuario, password) {
     if (body.token) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
+      cargarEvaluaciones()
       NAV.push("page-agregarEvaluacion");
     } else if (body.mensaje) {
       body.codigo = 400;
@@ -278,8 +284,12 @@ async function cargarObjetivos() {
       for (let objetivo of body.objetivos) {
         texto += `<ion-select-option value="${objetivo.id}">${objetivo.emoji} ${objetivo.nombre}</ion-select-option>`;
       }
-
       selectObjetivo.innerHTML = texto;
+
+      objetivos = body.objetivos; // Guardar los objetivos en la variable global
+      console.log("Objetivos cargados:", objetivos);
+
+
     } else {
       await mostrarAlert({
         header: "Error al cargar objetivos",
@@ -349,6 +359,7 @@ async function guardarEvaluacion() {
       document.querySelector("#selectObjetivo").value = "";
       document.querySelector("#calificacion").value = "";
       document.querySelector("#fecha").value = "";
+      cargarEvaluaciones()
     } else {
       await mostrarAlert({
         header: "Error al guardar la evaluación",
@@ -362,6 +373,76 @@ async function guardarEvaluacion() {
         "No se pudo guardar la evaluación. Por favor, inténtalo de nuevo.",
     });
   }
+}
+
+async function cargarEvaluaciones() {
+  let token = localStorage.getItem("token");
+  let idUsuario = localStorage.getItem("idUsuario");
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("token", token);
+  myHeaders.append("iduser", idUsuario)
+
+  const requestOptions = {
+    headers: myHeaders,
+    redirect: "follow",
+  };
+  try {
+    let url = `${URL_BASE}evaluaciones.php?idUsuario=${localStorage.getItem("idUsuario")}`;
+    let response = await fetch(url, requestOptions);
+    let body = await response.json();
+    console.log(body);
+
+    if (body.codigo === 200) {
+
+      console.log("Evaluaciones cargadas:", body.evaluaciones);
+
+      let texto = "";
+
+      for (let i = 0; i < body.evaluaciones.length; i++) {
+        const evaluacion = body.evaluaciones[i];
+
+        for (let j = 0; j < objetivos.length; j++) {
+          const objetivo = objetivos[j];
+
+          if (evaluacion.idObjetivo === objetivo.id) {
+            texto += `
+        <ion-item>
+          <ion-label>
+            Objetivo: ${objetivo.emoji} ${objetivo.nombre}<br>
+            Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
+          </ion-label>
+          <ion-button fill="clear">Borrar</ion-button>
+        </ion-item>
+      `;
+  
+          }
+        }
+      }
+
+      // Al final, insertar todo el texto junto UNA sola vez
+      document.getElementById("listaEvaluaciones").innerHTML = texto;
+
+
+
+    } else {
+      await mostrarAlert({
+        header: "Error al cargar evaluaciones",
+        message: body.mensaje || "Ocurrió un error inesperado.",
+      });
+    }
+  } catch (error) {
+    await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudieron cargar las evaluaciones.",
+    });
+  }
+
+
+
+
+
+
 }
 
 function camposValidos(...datos) {
@@ -401,3 +482,4 @@ function mostrarAgregarEvaluacion() {
   ocultarTodasLasSecciones();
   document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
 }
+
