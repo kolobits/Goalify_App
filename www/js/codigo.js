@@ -17,10 +17,11 @@ function inicio() {
   document.querySelector("#logout").addEventListener("click", logout);
   document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
   document.querySelector("#btnRegistrar").addEventListener("click", registrar);
-  document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);
+  document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);;
+  // document.querySelector("#btnEliminarEvaluacion").addEventListener("click", eliminarEvaluacion)
   armarMenu();
   cargarPaises();
-
+  cargarObjetivos();
 
 }
 
@@ -47,7 +48,6 @@ function navegar(event) {
       break;
     case "/agregarEvaluacion":
       AGREGAREVALUACION.style.display = "block";
-      cargarObjetivos();
       break;
   }
 }
@@ -206,8 +206,8 @@ async function login(usuario, password) {
     if (body.token) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
-      cargarEvaluaciones()
       NAV.push("page-agregarEvaluacion");
+      cargarEvaluaciones()
     } else if (body.mensaje) {
       body.codigo = 400;
     } else {
@@ -234,6 +234,7 @@ async function hacerLogin() {
     return;
   }
   try {
+
     const resultado = await login(usuario, password);
 
     if (resultado.codigo === 200) {
@@ -399,31 +400,23 @@ async function cargarEvaluaciones() {
 
       let texto = "";
 
-      for (let i = 0; i < body.evaluaciones.length; i++) {
-        const evaluacion = body.evaluaciones[i];
+  for (let evaluacion of body.evaluaciones) {
+    const objetivo = objetivos.find(obj => obj.id === evaluacion.idObjetivo);
 
-        for (let j = 0; j < objetivos.length; j++) {
-          const objetivo = objetivos[j];
-
-          if (evaluacion.idObjetivo === objetivo.id) {
-            texto += `
+    if (objetivo) {
+      texto += `
         <ion-item>
           <ion-label>
             Objetivo: ${objetivo.emoji} ${objetivo.nombre}<br>
             Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
           </ion-label>
-          <ion-button fill="clear">Borrar</ion-button>
+          <ion-button onclick="eliminarEvaluacion(${evaluacion.id})" fill="clear">Borrar</ion-button>
         </ion-item>
       `;
-  
-          }
-        }
-      }
-
-      // Al final, insertar todo el texto junto UNA sola vez
+    } else {
+      texto = `No tiene evaluaciones dispobibles` }
+  }   
       document.getElementById("listaEvaluaciones").innerHTML = texto;
-
-
 
     } else {
       await mostrarAlert({
@@ -437,11 +430,39 @@ async function cargarEvaluaciones() {
       message: "No se pudieron cargar las evaluaciones.",
     });
   }
+}
 
+async function eliminarEvaluacion(id) {
+  let token = localStorage.getItem("token");
+  let idUsuario = localStorage.getItem("idUsuario");
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("token", token);
+  myHeaders.append("iduser", idUsuario)
 
+  const requestOptions = {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  };
 
-
-
+  try {
+     let url = `${URL_BASE}evaluaciones.php?idEvaluacion=${id}`;
+     let response = await fetch(url, requestOptions);
+     let body = await response.json();
+         if (body.codigo === 200) {
+             await mostrarAlert({
+             header: "Evaluacion Eliminada",
+             message: body.mensaje || "Evaluacion Eliminada con exito.",
+      });
+      cargarEvaluaciones()
+      }
+  } catch (error) {
+     await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudieron cargar las evaluaciones.",
+    });
+  }
 
 }
 
