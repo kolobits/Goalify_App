@@ -19,10 +19,12 @@ function inicio() {
   document.querySelector("#btnRegistrar").addEventListener("click", registrar);
   document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);;
   // document.querySelector("#btnEliminarEvaluacion").addEventListener("click", eliminarEvaluacion)
-  armarMenu();
   cargarPaises();
-  cargarObjetivos();
-
+   
+  if (localStorage.getItem("token") && localStorage.getItem("idUsuario")) {
+    armarMenu();
+    cargarObjetivos();
+    }
 }
 
 function logout() {
@@ -207,7 +209,11 @@ async function login(usuario, password) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
       NAV.push("page-agregarEvaluacion");
-      cargarEvaluaciones()
+      armarMenu();
+      cargarObjetivos();
+      cargarEvaluaciones();
+
+
     } else if (body.mensaje) {
       body.codigo = 400;
     } else {
@@ -287,7 +293,7 @@ async function cargarObjetivos() {
       }
       selectObjetivo.innerHTML = texto;
 
-      objetivos = body.objetivos; // Guardar los objetivos en la variable global
+      objetivos = body.objetivos;
       console.log("Objetivos cargados:", objetivos);
 
 
@@ -482,25 +488,25 @@ function ocultarPantallas() {
   AGREGAREVALUACION.style.display = "none";
 }
 
-function ocultarTodasLasSecciones() {
-  document.querySelector("#pantalla-registro").style.display = "none";
-  document.querySelector("#pantalla-login").style.display = "none";
-  document.querySelector("#pantalla-principal").style.display = "none";
-  document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
-}
+// function ocultarTodasLasSecciones() {
+//   document.querySelector("#pantalla-registro").style.display = "none";
+//   document.querySelector("#pantalla-login").style.display = "none";
+//   document.querySelector("#pantalla-principal").style.display = "none";
+//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
+// }
 
-function mostrarSeccionRegistro() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-registro").style.display = "block";
-}
+// function mostrarSeccionRegistro() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-registro").style.display = "block";
+// }
 
-function mostrarSeccionLogin() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-login").style.display = "block";
-}
+// function mostrarSeccionLogin() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-login").style.display = "block";
+// }
 
-function mostrarAgregarEvaluacion() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
-}
+// function mostrarAgregarEvaluacion() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
+// }
 
