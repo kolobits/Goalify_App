@@ -5,6 +5,7 @@ const HOME = document.querySelector("#pantalla-home");
 const LOGIN = document.querySelector("#pantalla-login");
 const REGISTRO = document.querySelector("#pantalla-registro");
 const AGREGAREVALUACION = document.querySelector("#pantalla-agregarEvaluacion");
+const PUNTAJE = document.querySelector("#pantalla-puntaje");
 const NAV = document.querySelector("ion-nav");
 inicio();
 
@@ -55,7 +56,9 @@ function navegar(event) {
     case "/agregarEvaluacion":
       cargarEvaluaciones();
       AGREGAREVALUACION.style.display = "block";
-
+      break;
+    case "/puntaje":
+      PUNTAJE.style.display = "block";
       break;
   }
 }
@@ -530,22 +533,22 @@ async function filtrarEvaluaciones() {
       const hoy = new Date();
 
       let evaluacionesFiltradas = [];
-      for (const e of body.evaluaciones) {
-        const fechaEvaluacion = new Date(e.fecha);
+      for (const evaluacion of body.evaluaciones) {
+        const fechaEvaluacion = new Date(evaluacion.fecha);
         if (filtro === "semana") {
           let semanal = new Date(hoy);
           semanal.setDate(hoy.getDate() - 7);
           if (fechaEvaluacion >= semanal && fechaEvaluacion <= hoy) {
-            evaluacionesFiltradas.push(e);
+            evaluacionesFiltradas.push(evaluacion);
           }
         } else if (filtro === "mes") {
           let mensual = new Date(hoy);
           mensual.setDate(hoy.getDate() - 30);
           if (fechaEvaluacion >= mensual && fechaEvaluacion <= hoy) {
-            evaluacionesFiltradas.push(e);
+            evaluacionesFiltradas.push(evaluacion);
           }
         } else {
-          evaluacionesFiltradas.push(e); // "todo"
+          evaluacionesFiltradas.push(evaluacion); // "todo"
         }
       }
 
@@ -591,12 +594,6 @@ async function filtrarEvaluaciones() {
 }
 
 
-
-
-
-
-
-
 // VALIDACIONES
 // Esta función se encarga de validar que los campos no estén vacíos
 function camposValidos(...datos) {
@@ -627,6 +624,7 @@ function ocultarPantallas() {
   LOGIN.style.display = "none";
   REGISTRO.style.display = "none";
   AGREGAREVALUACION.style.display = "none";
+  PUNTAJE.style.display = "none";
 }
 
 // OCULTAR TODAS LAS SECCIONES
@@ -636,6 +634,7 @@ function ocultarTodasLasSecciones() {
   document.querySelector("#pantalla-login").style.display = "none";
   document.querySelector("#pantalla-principal").style.display = "none";
   document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
+  document.querySelector("#pantalla-puntaje").style.display = "none";
 }
 
 // function mostrarSeccionRegistro() {

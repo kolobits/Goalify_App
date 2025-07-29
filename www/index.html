@@ -19,6 +19,7 @@
       <ion-route url="/login" component="page-login"></ion-route>
       <ion-route url="/registro" component="page-registro"></ion-route>
       <ion-route url="/agregarEvaluacion" component="page-agregarEvaluacion"></ion-route>
+      <ion-route url="/puntaje" component="page-puntaje"></ion-route>
     </ion-router>
     <ion-nav id="nav"></ion-nav>
 
@@ -35,6 +36,7 @@
         <ion-item href="/login" class="deslogueado">Login</ion-item>
         <ion-item href="/registro" class="deslogueado">Registro</ion-item>
         <ion-item href="/agregarEvaluacion" class="logueado">Agregar Evaluacion</ion-item>
+        <ion-item href="/puntaje" class="logueado">Puntajes</ion-item>
         <ion-item id="logout" class="logueado">Logout</ion-item>
       </ion-content>
     </ion-menu>
@@ -178,18 +180,41 @@
         </ion-list>
 
         <ion-button expand="full" id="btnFiltrarFechas">Filtrar</ion-button>
-        
-        <div style="margin-bottom: 50px;"></div>
 
+        <div style="margin-bottom: 50px;"></div>
 
       </ion-content>
     </page-agregarEvaluacion>
 
 
+    <page-objetivos class="ion-page" id="pantalla-puntaje">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Objetivos</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Puntaje global</ion-card-title>
+          </ion-card-header>
+          <ion-card-content id="puntaje-global">-</ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Puntaje diario</ion-card-title>
+          </ion-card-header>
+          <ion-card-content id="puntaje-diario">-</ion-card-content>
+        </ion-card>
+      </ion-content>
 
 
-    <!-- ALERT GENERAL -->
-    <ion-alert id="alertaGlobal"></ion-alert>
+      <!-- ALERT GENERAL -->
+      <ion-alert id="alertaGlobal"></ion-alert>
 
   </ion-app>
 
