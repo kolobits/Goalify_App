@@ -1,5 +1,4 @@
 const URL_BASE = "https://goalify.develotion.com/";
-
 const MENU = document.querySelector("#menu");
 const ROUTER = document.querySelector("#route");
 const HOME = document.querySelector("#pantalla-home");
@@ -11,22 +10,26 @@ inicio();
 
 let objetivos = [];
 
-
+// INICIO
+// Esta función se encarga de inicializar la aplicación
 function inicio() {
   ROUTER.addEventListener("ionRouteDidChange", navegar);
   document.querySelector("#logout").addEventListener("click", logout);
   document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
   document.querySelector("#btnRegistrar").addEventListener("click", registrar);
-  document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);;
-  // document.querySelector("#btnEliminarEvaluacion").addEventListener("click", eliminarEvaluacion)
+  document
+    .querySelector("#btnGuardarEvaluacion")
+    .addEventListener("click", guardarEvaluacion);
   cargarPaises();
-   
+  armarMenu();
+
   if (localStorage.getItem("token") && localStorage.getItem("idUsuario")) {
-    armarMenu();
     cargarObjetivos();
-    }
+  }
 }
 
+// LOGOUT
+// Esta función se encarga de cerrar la sesión del usuario
 function logout() {
   localStorage.removeItem("token");
   MENU.close();
@@ -34,6 +37,8 @@ function logout() {
   NAV.push("page-home");
 }
 
+// NAVEGAR
+// Esta función se encarga de navegar entre las diferentes pantallas de la aplicación
 function navegar(event) {
   let ruta = event.detail.to;
   ocultarPantallas();
@@ -49,11 +54,15 @@ function navegar(event) {
       REGISTRO.style.display = "block";
       break;
     case "/agregarEvaluacion":
+      cargarEvaluaciones();
       AGREGAREVALUACION.style.display = "block";
+
       break;
   }
 }
 
+// MOSTRAR ALERTA
+// Esta función se encarga de mostrar una alerta global con un mensaje, encabezado y botones
 async function mostrarAlert({
   header = "",
   subHeader = "",
@@ -75,6 +84,8 @@ async function mostrarAlert({
   await alert.present();
 }
 
+// MENU
+// Esta función se encarga de armar el menú dependiendo del estado de login del usuario
 function armarMenu() {
   let elemsClaseDeslogueado = document.querySelectorAll(".deslogueado");
   let elemsClaseLogueado = document.querySelectorAll(".logueado");
@@ -98,6 +109,8 @@ function armarMenu() {
   }
 }
 
+// CARGAR PAÍSES
+// Esta función se encarga de cargar los países desde el servidor y mostrarlos en el select
 async function cargarPaises() {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -129,6 +142,9 @@ async function cargarPaises() {
   }
 }
 
+// REGISTRO
+// Esta función se encarga de registrar un nuevo usuario
+// Recibe el usuario, la contraseña y el país, y envía los datos al servidor
 async function registrar() {
   let usuario = document.querySelector("#usuario").value;
   let password = document.querySelector("#password").value;
@@ -182,12 +198,16 @@ async function registrar() {
     } catch (error) {
       await mostrarAlert({
         header: "Error de conexión",
-        message: "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo más tarde.",
+        message:
+          "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo más tarde.",
       });
     }
   }
 }
 
+// LOGIN
+// Esta función se encarga de hacer el login del usuario
+// Recibe el usuario y la contraseña, y devuelve un objeto con el token y el id
 async function login(usuario, password) {
   let obj = {};
   obj.usuario = usuario;
@@ -210,10 +230,6 @@ async function login(usuario, password) {
       localStorage.setItem("idUsuario", body.id);
       NAV.push("page-agregarEvaluacion");
       armarMenu();
-      cargarObjetivos();
-      cargarEvaluaciones();
-
-
     } else if (body.mensaje) {
       body.codigo = 400;
     } else {
@@ -223,12 +239,14 @@ async function login(usuario, password) {
   } catch (error) {
     await mostrarAlert({
       header: "Error de conexión",
-      message: "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo más tarde.",
+      message:
+        "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo más tarde.",
     });
   }
 }
 
-
+// Hacer login desde el botón de login
+// Esta función se encarga de validar los campos y llamar a la función de login
 async function hacerLogin() {
   let usuario = document.querySelector("#usuarioLogin").value;
   let password = document.querySelector("#passwordLogin").value;
@@ -240,7 +258,6 @@ async function hacerLogin() {
     return;
   }
   try {
-
     const resultado = await login(usuario, password);
 
     if (resultado.codigo === 200) {
@@ -264,6 +281,8 @@ async function hacerLogin() {
   }
 }
 
+// CARGAR OBJETIVOS
+// Esta función se encarga de cargar los objetivos desde el servidor y mostrarlos en el select
 async function cargarObjetivos() {
   let token = localStorage.getItem("token");
   let idUsuario = localStorage.getItem("idUsuario");
@@ -278,7 +297,6 @@ async function cargarObjetivos() {
     headers: myHeaders,
     redirect: "follow",
   };
-
 
   try {
     let response = await fetch(URL_BASE + "objetivos.php", requestOptions);
@@ -295,8 +313,6 @@ async function cargarObjetivos() {
 
       objetivos = body.objetivos;
       console.log("Objetivos cargados:", objetivos);
-
-
     } else {
       await mostrarAlert({
         header: "Error al cargar objetivos",
@@ -312,6 +328,8 @@ async function cargarObjetivos() {
   }
 }
 
+// GUARDAR EVALUACIÓN
+// Esta función se encarga de guardar una evaluación en el servidor
 async function guardarEvaluacion() {
   let token = localStorage.getItem("token");
   let idUsuario = localStorage.getItem("idUsuario");
@@ -330,6 +348,13 @@ async function guardarEvaluacion() {
     await mostrarAlert({
       header: "Calificación inválida",
       message: "La calificación debe estar entre -5 y 5.",
+    });
+    return;
+  }
+  if (!fechaValida(fecha)) {
+    await mostrarAlert({
+      header: "Fecha inválida",
+      message: "La fecha debe ser anterior o igual a la fecha actual.",
     });
     return;
   }
@@ -366,7 +391,7 @@ async function guardarEvaluacion() {
       document.querySelector("#selectObjetivo").value = "";
       document.querySelector("#calificacion").value = "";
       document.querySelector("#fecha").value = "";
-      cargarEvaluaciones()
+      cargarEvaluaciones();
     } else {
       await mostrarAlert({
         header: "Error al guardar la evaluación",
@@ -382,48 +407,53 @@ async function guardarEvaluacion() {
   }
 }
 
+// CARGAR EVALUACIONES
+// Esta función se encarga de cargar las evaluaciones del usuario desde el servidor y mostrarlas
 async function cargarEvaluaciones() {
   let token = localStorage.getItem("token");
   let idUsuario = localStorage.getItem("idUsuario");
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("token", token);
-  myHeaders.append("iduser", idUsuario)
+  myHeaders.append("iduser", idUsuario);
 
   const requestOptions = {
     headers: myHeaders,
     redirect: "follow",
   };
   try {
-    let url = `${URL_BASE}evaluaciones.php?idUsuario=${localStorage.getItem("idUsuario")}`;
+    let url = `${URL_BASE}evaluaciones.php?idUsuario=${localStorage.getItem(
+      "idUsuario"
+    )}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
     console.log(body);
 
     if (body.codigo === 200) {
-
       console.log("Evaluaciones cargadas:", body.evaluaciones);
 
       let texto = "";
 
-  for (let evaluacion of body.evaluaciones) {
-    const objetivo = objetivos.find(obj => obj.id === evaluacion.idObjetivo);
+      for (let evaluacion of body.evaluaciones) {
+        const objetivo = objetivos.find(
+          (obj) => obj.id === evaluacion.idObjetivo
+        );
 
-    if (objetivo) {
-      texto += `
+        if (objetivo) {
+          texto += `
         <ion-item>
           <ion-label>
-            Objetivo: ${objetivo.emoji} ${objetivo.nombre}<br>
+            Objetivo: ${objetivo.emoji} ${objetivo.nombre}
             Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
           </ion-label>
           <ion-button onclick="eliminarEvaluacion(${evaluacion.id})" fill="clear">Borrar</ion-button>
         </ion-item>
       `;
-    } else {
-      texto = `No tiene evaluaciones dispobibles` }
-  }   
-      document.getElementById("listaEvaluaciones").innerHTML = texto;
-
+        } else {
+          texto = `No tiene evaluaciones dispobibles`;
+        }
+      }
+      document.querySelector("#listaEvaluaciones").innerHTML = texto;
     } else {
       await mostrarAlert({
         header: "Error al cargar evaluaciones",
@@ -438,13 +468,15 @@ async function cargarEvaluaciones() {
   }
 }
 
+// ELIMINAR EVALUACIÓN
+// Esta función se encarga de eliminar una evaluación del servidor
 async function eliminarEvaluacion(id) {
   let token = localStorage.getItem("token");
   let idUsuario = localStorage.getItem("idUsuario");
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("token", token);
-  myHeaders.append("iduser", idUsuario)
+  myHeaders.append("iduser", idUsuario);
 
   const requestOptions = {
     method: "DELETE",
@@ -453,25 +485,26 @@ async function eliminarEvaluacion(id) {
   };
 
   try {
-     let url = `${URL_BASE}evaluaciones.php?idEvaluacion=${id}`;
-     let response = await fetch(url, requestOptions);
-     let body = await response.json();
-         if (body.codigo === 200) {
-             await mostrarAlert({
-             header: "Evaluacion Eliminada",
-             message: body.mensaje || "Evaluacion Eliminada con exito.",
+    let url = `${URL_BASE}evaluaciones.php?idEvaluacion=${id}`;
+    let response = await fetch(url, requestOptions);
+    let body = await response.json();
+    if (body.codigo === 200) {
+      await mostrarAlert({
+        header: "Evaluacion Eliminada",
+        message: body.mensaje || "Evaluacion Eliminada con exito.",
       });
-      cargarEvaluaciones()
-      }
+      cargarEvaluaciones();
+    }
   } catch (error) {
-     await mostrarAlert({
+    await mostrarAlert({
       header: "Error de conexión",
       message: "No se pudieron cargar las evaluaciones.",
     });
   }
-
 }
 
+// VALIDACIONES
+// Esta función se encarga de validar que los campos no estén vacíos
 function camposValidos(...datos) {
   for (let dato of datos) {
     if (dato == null || dato == "") {
@@ -481,6 +514,18 @@ function camposValidos(...datos) {
   return true;
 }
 
+// Esta función se encarga de validar que la fecha sea anterior o igual a la fecha actual
+// y que no sea anterior a hoy
+function fechaValida(fecha) {
+  let fechaSeleccionada = new Date(fecha);
+  let fechaHoy = new Date();
+
+  if (fechaSeleccionada < fechaHoy) {
+    return true;
+  }
+  return false;
+}
+
 function ocultarPantallas() {
   HOME.style.display = "none";
   LOGIN.style.display = "none";
@@ -488,25 +533,24 @@ function ocultarPantallas() {
   AGREGAREVALUACION.style.display = "none";
 }
 
-// function ocultarTodasLasSecciones() {
-//   document.querySelector("#pantalla-registro").style.display = "none";
-//   document.querySelector("#pantalla-login").style.display = "none";
-//   document.querySelector("#pantalla-principal").style.display = "none";
-//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
-// }
+function ocultarTodasLasSecciones() {
+  document.querySelector("#pantalla-registro").style.display = "none";
+  document.querySelector("#pantalla-login").style.display = "none";
+  document.querySelector("#pantalla-principal").style.display = "none";
+  document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
+}
 
-// function mostrarSeccionRegistro() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-registro").style.display = "block";
-// }
+function mostrarSeccionRegistro() {
+  ocultarTodasLasSecciones();
+  document.querySelector("#pantalla-registro").style.display = "block";
+}
 
-// function mostrarSeccionLogin() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-login").style.display = "block";
-// }
+function mostrarSeccionLogin() {
+  ocultarTodasLasSecciones();
+  document.querySelector("#pantalla-login").style.display = "block";
+}
 
-// function mostrarAgregarEvaluacion() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
-// }
-
+function mostrarAgregarEvaluacion() {
+  ocultarTodasLasSecciones();
+  document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
+}
