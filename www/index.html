@@ -38,9 +38,9 @@
         <ion-item id="logout" class="logueado">Logout</ion-item>
       </ion-content>
     </ion-menu>
-    <div class="ion-page" id="main-content">
+    <div class="ion-page" id="main-content"></div>
 
-    </div>
+
 
     <!-- PANTALLAS -->
     <!-- INICIO -->
@@ -154,23 +154,47 @@
             <ion-title>Lista de Evaluaciones</ion-title>
           </ion-toolbar>
         </ion-header>
-        <ion-list id="listaEvaluaciones" >
-          <ion-item >
+        <ion-list id="listaEvaluaciones">
+          <ion-item>
           </ion-item>
         </ion-list>
+
+        <div style="margin-top: 50px;"></div>
+
+        <!-- FILTRO DE EVALUACIONES -->
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Filtrar Evaluaciones</ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-list>
+          <ion-item>
+            <ion-select id="filtroFechas" interface="popover" placeholder="Seleccione un periodo">
+              <ion-select-option value="semana">Última semana</ion-select-option>
+              <ion-select-option value="mes">Último mes</ion-select-option>
+              <ion-select-option value="todo">Todo el histórico</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="full" id="btnFiltrarFechas">Filtrar</ion-button>
+        
+        <div style="margin-bottom: 50px;"></div>
+
+
       </ion-content>
     </page-agregarEvaluacion>
-    
-    
 
 
-<!-- ALERT GENERAL -->
+
+
+    <!-- ALERT GENERAL -->
     <ion-alert id="alertaGlobal"></ion-alert>
 
-</ion-app>  
+  </ion-app>
 
-    <script src="js/clases.js"></script>
-    <script src="js/codigo.js"></script>
+  <script src="js/clases.js"></script>
+  <script src="js/codigo.js"></script>
 
 </body>
 

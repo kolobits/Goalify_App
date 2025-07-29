@@ -17,9 +17,8 @@ function inicio() {
   document.querySelector("#logout").addEventListener("click", logout);
   document.querySelector("#btnLogin").addEventListener("click", hacerLogin);
   document.querySelector("#btnRegistrar").addEventListener("click", registrar);
-  document
-    .querySelector("#btnGuardarEvaluacion")
-    .addEventListener("click", guardarEvaluacion);
+  document.querySelector("#btnGuardarEvaluacion").addEventListener("click", guardarEvaluacion);
+  document.querySelector("#btnFiltrarFechas").addEventListener("click", filtrarEvaluaciones);
   cargarPaises();
   armarMenu();
 
@@ -229,6 +228,8 @@ async function login(usuario, password) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
       NAV.push("page-agregarEvaluacion");
+      cargarObjetivos();
+      cargarEvaluaciones();
       armarMenu();
     } else if (body.mensaje) {
       body.codigo = 400;
@@ -503,6 +504,99 @@ async function eliminarEvaluacion(id) {
   }
 }
 
+
+// FILTRAR EVALUACIONES
+// Esta función se encarga de filtrar las evaluaciones por fecha
+async function filtrarEvaluaciones() {
+  let token = localStorage.getItem("token");
+  let idUsuario = localStorage.getItem("idUsuario");
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("token", token);
+  myHeaders.append("iduser", idUsuario);
+
+  const requestOptions = {
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  try {
+    let url = `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`;
+    let response = await fetch(url, requestOptions);
+    let body = await response.json();
+
+    if (body.codigo === 200) {
+      const filtro = document.querySelector("#filtroFechas").value;
+      const hoy = new Date();
+
+      let evaluacionesFiltradas = [];
+      for (const e of body.evaluaciones) {
+        const fechaEvaluacion = new Date(e.fecha);
+        if (filtro === "semana") {
+          let semanal = new Date(hoy);
+          semanal.setDate(hoy.getDate() - 7);
+          if (fechaEvaluacion >= semanal && fechaEvaluacion <= hoy) {
+            evaluacionesFiltradas.push(e);
+          }
+        } else if (filtro === "mes") {
+          let mensual = new Date(hoy);
+          mensual.setDate(hoy.getDate() - 30);
+          if (fechaEvaluacion >= mensual && fechaEvaluacion <= hoy) {
+            evaluacionesFiltradas.push(e);
+          }
+        } else {
+          evaluacionesFiltradas.push(e); // "todo"
+        }
+      }
+
+      let texto = "";
+
+      for (const evaluacion of evaluacionesFiltradas) {
+        let objetivo = null;
+        for (const obj of objetivos) {
+          if (obj.id === evaluacion.idObjetivo) {
+            objetivo = obj;
+            break;
+          }
+        }
+        if (objetivo) {
+          texto +=
+            `<ion-item>
+              <ion-label>
+                Objetivo: ${objetivo.emoji} ${objetivo.nombre}
+                Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
+              </ion-label>
+              <ion-button onclick="eliminarEvaluacion(${evaluacion.id})" fill="clear">Borrar</ion-button>
+            </ion-item>`;
+        }
+      }
+
+      if (texto === "") {
+        texto = `<ion-item><ion-label>No hay evaluaciones en el período seleccionado.</ion-label></ion-item>`;
+      }
+
+      document.querySelector("#listaEvaluaciones").innerHTML = texto;
+    } else {
+      await mostrarAlert({
+        header: "Error al filtrar",
+        message: body.mensaje || "No se pudieron obtener las evaluaciones.",
+      });
+    }
+  } catch (error) {
+    await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudo contactar con el servidor.",
+    });
+  }
+}
+
+
+
+
+
+
+
+
 // VALIDACIONES
 // Esta función se encarga de validar que los campos no estén vacíos
 function camposValidos(...datos) {
@@ -526,6 +620,8 @@ function fechaValida(fecha) {
   return false;
 }
 
+// OCULTAR PANTALLAS
+// Esta función se encarga de ocultar todas las pantallas de la aplicación
 function ocultarPantallas() {
   HOME.style.display = "none";
   LOGIN.style.display = "none";
@@ -533,6 +629,8 @@ function ocultarPantallas() {
   AGREGAREVALUACION.style.display = "none";
 }
 
+// OCULTAR TODAS LAS SECCIONES
+// Esta función se encarga de ocultar todas las secciones de la aplicación
 function ocultarTodasLasSecciones() {
   document.querySelector("#pantalla-registro").style.display = "none";
   document.querySelector("#pantalla-login").style.display = "none";
@@ -540,17 +638,17 @@ function ocultarTodasLasSecciones() {
   document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
 }
 
-function mostrarSeccionRegistro() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-registro").style.display = "block";
-}
+// function mostrarSeccionRegistro() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-registro").style.display = "block";
+// }
 
-function mostrarSeccionLogin() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-login").style.display = "block";
-}
+// function mostrarSeccionLogin() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-login").style.display = "block";
+// }
 
-function mostrarAgregarEvaluacion() {
-  ocultarTodasLasSecciones();
-  document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
-}
+// function mostrarAgregarEvaluacion() {
+//   ocultarTodasLasSecciones();
+//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
+// }
