@@ -58,6 +58,7 @@ function navegar(event) {
       AGREGAREVALUACION.style.display = "block";
       break;
     case "/puntaje":
+      cargarPuntaje();
       PUNTAJE.style.display = "block";
       break;
   }
@@ -507,7 +508,6 @@ async function eliminarEvaluacion(id) {
   }
 }
 
-
 // FILTRAR EVALUACIONES
 // Esta función se encarga de filtrar las evaluaciones por fecha
 async function filtrarEvaluaciones() {
@@ -563,8 +563,7 @@ async function filtrarEvaluaciones() {
           }
         }
         if (objetivo) {
-          texto +=
-            `<ion-item>
+          texto += `<ion-item>
               <ion-label>
                 Objetivo: ${objetivo.emoji} ${objetivo.nombre}
                 Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
@@ -592,6 +591,81 @@ async function filtrarEvaluaciones() {
     });
   }
 }
+
+
+// CARGAR PUNTAJE GLOBAL
+// Esta función se encarga de cargar el puntaje promedio del usuario desde el servidor
+async function cargarPuntaje() {
+  let token = localStorage.getItem("token");
+  let idUsuario = localStorage.getItem("idUsuario");
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("token", token);
+  myHeaders.append("iduser", idUsuario);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  try {
+    let response = await fetch(
+      `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`,
+      requestOptions
+    );
+    let body = await response.json();
+
+    if (body.codigo === 200) {
+      let evaluaciones = body.evaluaciones;
+
+      let sumaCalificaciones = 0;
+      let cantidadEvaluaciones = evaluaciones.length;
+
+      for (const evaluacion of evaluaciones) {
+        sumaCalificaciones += evaluacion.calificacion;
+      }
+
+      let puntajePromedio = 0;
+      if (cantidadEvaluaciones > 0) {
+        puntajePromedio = sumaCalificaciones / cantidadEvaluaciones;
+      }
+
+      document.querySelector("#puntajeGlobal").innerHTML = `Puntaje promedio: ${puntajePromedio.toFixed(2)}`;
+
+      // CARGAR PUNTAJE DIARIO
+      // Esta función se encarga de cargar el puntaje diario del usuario desde el servidor
+      let hoy = new Date();
+      let sumaHoy = 0;
+      let cantidadHoy = 0;
+
+      for (let evaluacion of evaluaciones) {
+        if (evaluacion.fecha === hoy) {
+          sumaHoy += evaluacion.calificacion;
+          cantidadHoy++;
+        }
+      }
+      let promedioHoy = 0;
+      if (cantidadHoy > 0) {
+        promedioHoy = (sumaHoy / cantidadHoy);
+      }
+      document.querySelector("#puntajeDiario").innerHTML = `Puntaje diario: ${promedioHoy.toFixed(2)}`;
+    } else {
+      await mostrarAlert({
+        header: "Error al cargar puntaje",
+        message: body.mensaje || "No se pudieron obtener las evaluaciones.",
+      });
+    }
+  } catch (error) {
+    await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudo contactar con el servidor.",
+    });
+  }
+}
+
+
 
 
 // VALIDACIONES
