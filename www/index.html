@@ -8,6 +8,17 @@
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+      #map {
+        height: 100%;
+      }
+      </style>
+
 </head>
 
 <body>
@@ -20,6 +31,7 @@
       <ion-route url="/registro" component="page-registro"></ion-route>
       <ion-route url="/agregarEvaluacion" component="page-agregarEvaluacion"></ion-route>
       <ion-route url="/puntaje" component="page-puntaje"></ion-route>
+      <ion-route url="/mapa" component="page-mapa"></ion-route>
     </ion-router>
     <ion-nav id="nav"></ion-nav>
 
@@ -37,6 +49,7 @@
         <ion-item href="/registro" class="deslogueado">Registro</ion-item>
         <ion-item href="/agregarEvaluacion" class="logueado">Agregar Evaluacion</ion-item>
         <ion-item href="/puntaje" class="logueado">Puntajes</ion-item>
+        <ion-item href="/mapa" class="logueado">Mapa</ion-item>
         <ion-item id="logout" class="logueado">Logout</ion-item>
       </ion-content>
     </ion-menu>
@@ -187,6 +200,7 @@
     </page-agregarEvaluacion>
 
 
+    <!-- PUNTAJE -->
     <page-objetivos class="ion-page" id="pantalla-puntaje">
       <ion-header>
         <ion-toolbar>
@@ -211,10 +225,27 @@
           <ion-card-content id="puntajeDiario">-</ion-card-content>
         </ion-card>
       </ion-content>
+    </page-objetivos>
 
 
-      <!-- ALERT GENERAL -->
-      <ion-alert id="alertaGlobal"></ion-alert>
+    <!-- MAPA -->
+    <page-mapa class="ion-page" id="pantalla-mapa">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Mapa</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div id="map"></div>
+      </ion-content>
+    </page-mapa>
+
+
+    <!-- ALERT GENERAL -->
+    <ion-alert id="alertaGlobal"></ion-alert>
 
   </ion-app>
 

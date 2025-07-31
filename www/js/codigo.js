@@ -6,6 +6,7 @@ const LOGIN = document.querySelector("#pantalla-login");
 const REGISTRO = document.querySelector("#pantalla-registro");
 const AGREGAREVALUACION = document.querySelector("#pantalla-agregarEvaluacion");
 const PUNTAJE = document.querySelector("#pantalla-puntaje");
+const MAPA = document.querySelector("#pantalla-mapa");
 const NAV = document.querySelector("ion-nav");
 inicio();
 
@@ -60,6 +61,12 @@ function navegar(event) {
     case "/puntaje":
       cargarPuntaje();
       PUNTAJE.style.display = "block";
+      break;
+    case "/mapa":
+      setTimeout(function() {
+      mostrarMapa();
+      },500);
+      MAPA.style.display = "block";
       break;
   }
 }
@@ -666,6 +673,28 @@ async function cargarPuntaje() {
 }
 
 
+// MAPA
+// Esta función se encarga de mostrar un mapa utilizando Leaflet
+let map = null;
+
+async function mostrarMapa() {
+
+  let latitud = -40.0
+  let longitud = -60.0
+  if (map != null) {
+    map.remove()
+  }
+  map = L.map('map').setView([latitud, longitud], 3);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+}
+
+
+
+
 
 
 // VALIDACIONES
@@ -699,6 +728,7 @@ function ocultarPantallas() {
   REGISTRO.style.display = "none";
   AGREGAREVALUACION.style.display = "none";
   PUNTAJE.style.display = "none";
+  MAPA.style.display = "none";
 }
 
 // OCULTAR TODAS LAS SECCIONES
@@ -709,19 +739,6 @@ function ocultarTodasLasSecciones() {
   document.querySelector("#pantalla-principal").style.display = "none";
   document.querySelector("#pantalla-agregarEvaluacion").style.display = "none";
   document.querySelector("#pantalla-puntaje").style.display = "none";
+  document.querySelector("#pantalla-mapa").style.display = "none";
 }
 
-// function mostrarSeccionRegistro() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-registro").style.display = "block";
-// }
-
-// function mostrarSeccionLogin() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-login").style.display = "block";
-// }
-
-// function mostrarAgregarEvaluacion() {
-//   ocultarTodasLasSecciones();
-//   document.querySelector("#pantalla-agregarEvaluacion").style.display = "block";
-// }
