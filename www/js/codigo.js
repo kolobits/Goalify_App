@@ -11,6 +11,8 @@ const NAV = document.querySelector("ion-nav");
 inicio();
 
 let objetivos = [];
+let paises = [];
+let usuariosXPais = [];
 
 // INICIO
 // Esta función se encarga de inicializar la aplicación
@@ -64,6 +66,7 @@ function navegar(event) {
       break;
     case "/mapa":
       setTimeout(function() {
+      usuariosPorPais()
       mostrarMapa();
       },500);
       MAPA.style.display = "block";
@@ -143,6 +146,9 @@ async function cargarPaises() {
       }
 
       document.querySelector("#selectPaises").innerHTML = texto;
+
+      paises = body.paises
+      
     } else {
       alert("No se pudieron cargar los países");
     }
@@ -672,6 +678,47 @@ async function cargarPuntaje() {
   }
 }
 
+// CARGAR USUARIOS POR PAÍS
+// Esta función se encarga de cargar los usuarios por país desde el servidor
+async function usuariosPorPais() {
+  let token = localStorage.getItem("token");
+  let idUsuario = localStorage.getItem("idUsuario");
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("token", token);
+  myHeaders.append("iduser", idUsuario);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };  
+
+  try {
+    let response = await fetch(URL_BASE + "usuariosPorPais.php", requestOptions);
+    let body = await response.json();
+    if (body.codigo === 200) {
+      
+    usuariosXPais = body.paises
+
+    } else {        
+      await mostrarAlert({
+        header: "Error al cargar usuarios por país",
+        message: body.mensaje || "No se pudieron obtener los usuarios por país.",
+      });
+    } 
+
+  } catch (error) {
+    await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudo contactar con el servidor.",
+    });
+  } 
+
+
+}
+
 
 // MAPA
 // Esta función se encarga de mostrar un mapa utilizando Leaflet
@@ -690,9 +737,34 @@ async function mostrarMapa() {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
+
+ 
+let datos = usuariosXPais.map(usuarioPais => {
+  let pais = paises.find(p => p.name === usuarioPais.nombre); 
+  if (pais) {
+    return {
+      nombre: usuarioPais.nombre,
+      cantidad: usuarioPais.cantidadDeUsuarios,
+      lat: pais.latitude,   
+      lng: pais.longitude   
+    };
+  }
+  return null;
+}).filter(Boolean);
+
+// Agregar los marcadores con tooltip
+datos.forEach(pais => {
+  L.marker([pais.lat, pais.lng])
+    .addTo(map)
+    .bindTooltip(`${pais.nombre}: ${pais.cantidad} usuarios`, {
+      direction: 'top'
+    });
+
+
+});
+
+
 }
-
-
 
 
 
