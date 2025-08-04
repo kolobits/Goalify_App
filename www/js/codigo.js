@@ -42,7 +42,7 @@ function logout() {
 
 // NAVEGAR
 // Esta función se encarga de navegar entre las diferentes pantallas de la aplicación
-function navegar(event) {
+async function navegar(event) {
   let ruta = event.detail.to;
   ocultarPantallas();
   MENU.close();
@@ -65,11 +65,12 @@ function navegar(event) {
       PUNTAJE.style.display = "block";
       break;
     case "/mapa":
-      setTimeout(function() {
-      usuariosPorPais()
-      mostrarMapa();
-      },500);
       MAPA.style.display = "block";
+      await usuariosPorPais();
+      setTimeout(function () {
+        mostrarMapa();
+      }, 100);
+      
       break;
   }
 }
@@ -148,7 +149,7 @@ async function cargarPaises() {
       document.querySelector("#selectPaises").innerHTML = texto;
 
       paises = body.paises
-      
+
     } else {
       alert("No se pudieron cargar los países");
     }
@@ -649,7 +650,7 @@ async function cargarPuntaje() {
 
       // CARGAR PUNTAJE DIARIO
       // Esta función se encarga de cargar el puntaje diario del usuario desde el servidor
-      let hoy = new Date();
+      let hoy = new Date().toISOString().split("T")[0];
       let sumaHoy = 0;
       let cantidadHoy = 0;
 
@@ -693,28 +694,28 @@ async function usuariosPorPais() {
     method: "GET",
     headers: myHeaders,
     redirect: "follow",
-  };  
+  };
 
   try {
     let response = await fetch(URL_BASE + "usuariosPorPais.php", requestOptions);
     let body = await response.json();
     if (body.codigo === 200) {
-      
-    usuariosXPais = body.paises
 
-    } else {        
+      usuariosXPais = body.paises
+
+    } else {
       await mostrarAlert({
         header: "Error al cargar usuarios por país",
         message: body.mensaje || "No se pudieron obtener los usuarios por país.",
       });
-    } 
+    }
 
   } catch (error) {
     await mostrarAlert({
       header: "Error de conexión",
       message: "No se pudo contactar con el servidor.",
     });
-  } 
+  }
 
 
 }
@@ -738,36 +739,30 @@ async function mostrarMapa() {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
- 
-let datos = usuariosXPais.map(usuarioPais => {
-  let pais = paises.find(p => p.name === usuarioPais.nombre); 
-  if (pais) {
-    return {
-      nombre: usuarioPais.nombre,
-      cantidad: usuarioPais.cantidadDeUsuarios,
-      lat: pais.latitude,   
-      lng: pais.longitude   
-    };
-  }
-  return null;
-}).filter(Boolean);
 
-// Agregar los marcadores con tooltip
-datos.forEach(pais => {
-  L.marker([pais.lat, pais.lng])
-    .addTo(map)
-    .bindTooltip(`${pais.nombre}: ${pais.cantidad} usuarios`, {
-      direction: 'top'
-    });
+  let datos = usuariosXPais.map(usuarioPais => {
+    let pais = paises.find(p => p.name === usuarioPais.nombre);
+    if (pais) {
+      return {
+        nombre: usuarioPais.nombre,
+        cantidad: usuarioPais.cantidadDeUsuarios,
+        lat: pais.latitude,
+        lng: pais.longitude
+      };
+    }
+    return null;
+  }).filter(Boolean);
 
-
-});
-
+  // Agregar los marcadores con tooltip
+  datos.forEach(pais => {
+    L.marker([pais.lat, pais.lng])
+      .addTo(map)
+      .bindTooltip(`${pais.nombre}: ${pais.cantidad} usuarios`, {
+        direction: 'top'
+      });
+  });
 
 }
-
-
-
 
 // VALIDACIONES
 // Esta función se encarga de validar que los campos no estén vacíos
