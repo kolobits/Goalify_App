@@ -58,6 +58,7 @@ async function navegar(event) {
       REGISTRO.style.display = "block";
       break;
     case "/agregarEvaluacion":
+      cargarObjetivos();
       cargarEvaluaciones();
       AGREGAREVALUACION.style.display = "block";
       break;
@@ -140,6 +141,7 @@ async function cargarPaises() {
   try {
     let response = await fetch(URL_BASE + "paises.php", requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
 
     if (body.paises && body.paises.length > 0) {
       let texto = "";
@@ -181,9 +183,6 @@ async function registrar() {
     });
   } else {
     let objUsuario = new Usuario(usuario, password, pais);
-    console.log(objUsuario);
-    console.log(JSON.stringify(objUsuario));
-
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const rawBody = JSON.stringify(objUsuario);
@@ -198,7 +197,7 @@ async function registrar() {
     try {
       let response = await fetch(URL_BASE + "usuarios.php", requestOptions);
       let body = await response.json();
-      console.log(body);
+      if (await manejarError401(body)) return;
 
       if (body.codigo !== 200) {
         await mostrarAlert({
@@ -249,6 +248,7 @@ async function login(usuario, password) {
   try {
     let response = await fetch(URL_BASE + "login.php", requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
     if (body.token) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
@@ -297,7 +297,6 @@ async function hacerLogin() {
       });
     }
   } catch (error) {
-    console.log(error);
     await mostrarAlert({
       header: "Error",
       message:
@@ -326,6 +325,7 @@ async function cargarObjetivos() {
   try {
     let response = await fetch(URL_BASE + "objetivos.php", requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
 
     if (body.codigo === 200) {
       let selectObjetivo = document.querySelector("#selectObjetivo");
@@ -337,7 +337,6 @@ async function cargarObjetivos() {
       selectObjetivo.innerHTML = texto;
 
       objetivos = body.objetivos;
-      console.log("Objetivos cargados:", objetivos);
     } else {
       await mostrarAlert({
         header: "Error al cargar objetivos",
@@ -345,7 +344,6 @@ async function cargarObjetivos() {
       });
     }
   } catch (error) {
-    console.log(error);
     await mostrarAlert({
       header: "Error",
       message: "No se pudieron cargar los objetivos",
@@ -406,7 +404,7 @@ async function guardarEvaluacion() {
   try {
     let response = await fetch(URL_BASE + "evaluaciones.php", requestOptions);
     let body = await response.json();
-    console.log(body);
+    if (await manejarError401(body)) return;
 
     if (body.codigo === 200) {
       await mostrarAlert({
@@ -417,7 +415,6 @@ async function guardarEvaluacion() {
       document.querySelector("#calificacion").value = "";
       document.querySelector("#fecha").value = "";
       cargarEvaluaciones();
-      cargarPuntaje()
     } else {
       await mostrarAlert({
         header: "Error al guardar la evaluación",
@@ -452,13 +449,10 @@ async function cargarEvaluaciones() {
     let url = `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
-    console.log(body);
+    if (await manejarError401(body)) return;
 
     if (body.codigo === 200) {
-      console.log("Evaluaciones cargadas:", body.evaluaciones);
-
       let texto = "";
-
       for (let evaluacion of body.evaluaciones) {
         const objetivo = objetivos.find(
           (obj) => obj.id === evaluacion.idObjetivo
@@ -474,10 +468,13 @@ async function cargarEvaluaciones() {
           <ion-button onclick="eliminarEvaluacion(${evaluacion.id})" fill="clear">Borrar</ion-button>
         </ion-item>
       `;
-        } else {
-          texto = `No tiene evaluaciones dispobibles`;
         }
       }
+
+      if (texto === "") {
+        texto = `<ion-item><ion-label>No hay evaluaciones para mostrar.</ion-label></ion-item>`;
+      }
+
       document.querySelector("#listaEvaluaciones").innerHTML = texto;
     } else {
       await mostrarAlert({
@@ -488,7 +485,7 @@ async function cargarEvaluaciones() {
   } catch (error) {
     await mostrarAlert({
       header: "Error de conexión",
-      message: "No se pudieron cargar las evaluaciones.",
+      message: "No se pudo contactar con el servidor.",
     });
   }
   ApagarLoading();
@@ -514,18 +511,19 @@ async function eliminarEvaluacion(id) {
     let url = `${URL_BASE}evaluaciones.php?idEvaluacion=${id}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
+
     if (body.codigo === 200) {
       await mostrarAlert({
         header: "Evaluacion Eliminada",
         message: body.mensaje || "Evaluacion Eliminada con exito.",
       });
       cargarEvaluaciones();
-      cargarPuntaje()
     }
   } catch (error) {
     await mostrarAlert({
       header: "Error de conexión",
-      message: "No se pudieron cargar las evaluaciones.",
+      message: "No se pudo contactar con el servidor.",
     });
   }
 }
@@ -549,6 +547,7 @@ async function filtrarEvaluaciones() {
     let url = `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
 
     if (body.codigo === 200) {
       const filtro = document.querySelector("#filtroFechas").value;
@@ -639,6 +638,7 @@ async function cargarPuntaje() {
       requestOptions
     );
     let body = await response.json();
+    if (await manejarError401(body)) return;
 
     if (body.codigo === 200) {
       let evaluaciones = body.evaluaciones;
@@ -709,10 +709,10 @@ async function usuariosPorPais() {
   try {
     let response = await fetch(URL_BASE + "usuariosPorPais.php", requestOptions);
     let body = await response.json();
+    if (await manejarError401(body)) return;
+
     if (body.codigo === 200) {
-
       usuariosXPais = body.paises
-
     } else {
       await mostrarAlert({
         header: "Error al cargar usuarios por país",
@@ -726,8 +726,6 @@ async function usuariosPorPais() {
       message: "No se pudo contactar con el servidor.",
     });
   }
-
-
 }
 
 
@@ -791,26 +789,40 @@ function fechaValida(fecha) {
   let fechaSeleccionada = new Date(fecha);
   let fechaHoy = new Date();
 
-  if (fechaSeleccionada < fechaHoy) {
+  if (fechaSeleccionada <= fechaHoy) {
     return true;
   }
   return false;
 }
 
+
+// Esta función se encarga de mostrar un loading mientras se cargan los datos
 let loading = document.createElement('ion-loading');
 
 function PrenderLoading(texto) {
 
-    document.body.appendChild(loading);
-    loading.cssClass = 'my-custom-class';
-    loading.message = texto;
-    //loading.duration = 3000;
-    loading.present();
+  document.body.appendChild(loading);
+  loading.cssClass = 'my-custom-class';
+  loading.message = texto;
+  loading.present();
 }
 
 function ApagarLoading() {
-    loading.dismiss();
+  loading.dismiss();
 
+}
+
+// Esta función se encarga de manejar el error 401 (sesión expirada)
+async function manejarError401(body) {
+  if (body.codigo === 401) {
+    await mostrarAlert({
+      header: "Sesión expirada",
+      message: "Por seguridad, volvé a iniciar sesión.",
+    });
+    logout();
+    return true;
+  }
+  return false;
 }
 
 
