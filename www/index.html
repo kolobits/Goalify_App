@@ -47,7 +47,7 @@
         <ion-item href="/" class="logueado deslogueado">Home</ion-item>
         <ion-item href="/login" class="deslogueado">Login</ion-item>
         <ion-item href="/registro" class="deslogueado">Registro</ion-item>
-        <ion-item href="/agregarEvaluacion" class="logueado">Agregar Evaluacion</ion-item>
+        <ion-item href="/agregarEvaluacion" class="logueado">Evaluaciones</ion-item>
         <ion-item href="/puntaje" class="logueado">Puntajes</ion-item>
         <ion-item href="/mapa" class="logueado">Mapa</ion-item>
         <ion-item id="logout" class="logueado">Logout</ion-item>
@@ -69,7 +69,8 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        Pantalla de inicio
+        <h2 id="bienvenida">Pantalla de inicio</h2>
+        
       </ion-content>
     </page-home>
 
@@ -169,6 +170,18 @@
             <ion-title>Lista de Evaluaciones</ion-title>
           </ion-toolbar>
         </ion-header>
+         <ion-list>
+          <ion-item>
+            <ion-select id="filtroFechas" value="todo" interface="popover">
+              <ion-select-option value="semana">Última semana</ion-select-option>
+              <ion-select-option value="mes">Último mes</ion-select-option>
+              <ion-select-option value="todo">Todo el histórico</ion-select-option>
+            </ion-select>
+
+            <ion-item><ion-button expand="full" id="btnFiltrarFechas">Filtrar</ion-button></ion-item>
+          </ion-item>
+        </ion-list>
+
         <ion-list id="listaEvaluaciones">
           <ion-item>
           </ion-item>
@@ -176,28 +189,10 @@
 
         <div style="margin-top: 50px;"></div>
 
-        <!-- FILTRO DE EVALUACIONES -->
-        <ion-header>
-          <ion-toolbar>
-            <ion-title>Filtrar Evaluaciones</ion-title>
-          </ion-toolbar>
-        </ion-header>
-        <ion-list>
-          <ion-item>
-            <ion-select id="filtroFechas" interface="popover" placeholder="Seleccione un periodo">
-              <ion-select-option value="semana">Última semana</ion-select-option>
-              <ion-select-option value="mes">Último mes</ion-select-option>
-              <ion-select-option value="todo">Todo el histórico</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-list>
-
-        <ion-button expand="full" id="btnFiltrarFechas">Filtrar</ion-button>
-
-        <div style="margin-bottom: 50px;"></div>
-
       </ion-content>
     </page-agregarEvaluacion>
+
+    
 
 
     <!-- PUNTAJE -->
@@ -243,6 +238,7 @@
       </ion-content>
     </page-mapa>
 
+    
 
     <!-- ALERT GENERAL -->
     <ion-alert id="alertaGlobal"></ion-alert>

@@ -36,6 +36,7 @@ function inicio() {
 function logout() {
   localStorage.removeItem("token");
   MENU.close();
+  document.querySelector("#bienvenida").innerHTML = "Pantalla de inicio";
   armarMenu();
   NAV.push("page-home");
 }
@@ -66,11 +67,12 @@ async function navegar(event) {
       break;
     case "/mapa":
       MAPA.style.display = "block";
+      PrenderLoading("Cargando mapa...");
       await usuariosPorPais();
       setTimeout(function () {
         mostrarMapa();
       }, 100);
-      
+      ApagarLoading();
       break;
   }
 }
@@ -151,11 +153,16 @@ async function cargarPaises() {
       paises = body.paises
 
     } else {
-      alert("No se pudieron cargar los países");
+      await mostrarAlert({
+        header: "Error al cargar países",
+        message: "No se pudieron cargar los países disponibles.",
+      });
     }
   } catch (error) {
-    alert("Error de conexión al cargar países");
-    console.error(error);
+    await mostrarAlert({
+      header: "Error de conexión",
+      message: "No se pudo conectar con el servidor al intentar cargar los países.",
+    });
   }
 }
 
@@ -245,9 +252,8 @@ async function login(usuario, password) {
     if (body.token) {
       localStorage.setItem("token", body.token);
       localStorage.setItem("idUsuario", body.id);
-      NAV.push("page-agregarEvaluacion");
-      cargarObjetivos();
-      cargarEvaluaciones();
+      document.querySelector("#bienvenida").innerHTML = `Bienvenido ${usuario}`;
+      NAV.push("page-home");
       armarMenu();
     } else if (body.mensaje) {
       body.codigo = 400;
@@ -411,6 +417,7 @@ async function guardarEvaluacion() {
       document.querySelector("#calificacion").value = "";
       document.querySelector("#fecha").value = "";
       cargarEvaluaciones();
+      cargarPuntaje()
     } else {
       await mostrarAlert({
         header: "Error al guardar la evaluación",
@@ -441,9 +448,8 @@ async function cargarEvaluaciones() {
     redirect: "follow",
   };
   try {
-    let url = `${URL_BASE}evaluaciones.php?idUsuario=${localStorage.getItem(
-      "idUsuario"
-    )}`;
+    PrenderLoading("Cargando evaluaciones...");
+    let url = `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
     console.log(body);
@@ -485,6 +491,7 @@ async function cargarEvaluaciones() {
       message: "No se pudieron cargar las evaluaciones.",
     });
   }
+  ApagarLoading();
 }
 
 // ELIMINAR EVALUACIÓN
@@ -513,6 +520,7 @@ async function eliminarEvaluacion(id) {
         message: body.mensaje || "Evaluacion Eliminada con exito.",
       });
       cargarEvaluaciones();
+      cargarPuntaje()
     }
   } catch (error) {
     await mostrarAlert({
@@ -625,6 +633,7 @@ async function cargarPuntaje() {
   };
 
   try {
+    PrenderLoading("Cargando puntaje...")
     let response = await fetch(
       `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`,
       requestOptions
@@ -650,7 +659,7 @@ async function cargarPuntaje() {
 
       // CARGAR PUNTAJE DIARIO
       // Esta función se encarga de cargar el puntaje diario del usuario desde el servidor
-      let hoy = new Date().toISOString().split("T")[0];
+      let hoy = new Date().toLocaleDateString("en-CA")
       let sumaHoy = 0;
       let cantidadHoy = 0;
 
@@ -677,6 +686,7 @@ async function cargarPuntaje() {
       message: "No se pudo contactar con el servidor.",
     });
   }
+  ApagarLoading()
 }
 
 // CARGAR USUARIOS POR PAÍS
@@ -786,6 +796,23 @@ function fechaValida(fecha) {
   }
   return false;
 }
+
+let loading = document.createElement('ion-loading');
+
+function PrenderLoading(texto) {
+
+    document.body.appendChild(loading);
+    loading.cssClass = 'my-custom-class';
+    loading.message = texto;
+    //loading.duration = 3000;
+    loading.present();
+}
+
+function ApagarLoading() {
+    loading.dismiss();
+
+}
+
 
 // OCULTAR PANTALLAS
 // Esta función se encarga de ocultar todas las pantallas de la aplicación
