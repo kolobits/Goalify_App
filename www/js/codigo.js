@@ -38,7 +38,7 @@ function logout() {
   MENU.close();
   document.querySelector("#bienvenida").innerHTML = "Pantalla de inicio";
   armarMenu();
-  NAV.push("page-home");
+  NAV.push("page-login");
 }
 
 // NAVEGAR
