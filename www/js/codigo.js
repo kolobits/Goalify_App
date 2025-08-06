@@ -466,8 +466,9 @@ async function cargarEvaluaciones() {
           texto += `
         <ion-item>
           <ion-label>
-            Objetivo: ${objetivo.emoji} ${objetivo.nombre}
-            Calificación: ${evaluacion.calificacion} | Fecha: ${evaluacion.fecha}
+            Objetivo: ${objetivo.emoji} ${objetivo.nombre} <br>
+            Calificación: ${evaluacion.calificacion} <br>
+            Fecha: ${evaluacion.fecha}
           </ion-label>
           <ion-button onclick="eliminarEvaluacion(${evaluacion.id})" fill="clear">Borrar</ion-button>
         </ion-item>
