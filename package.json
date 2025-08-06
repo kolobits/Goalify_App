@@ -1,0 +1,26 @@
+{
+  "name": "goalify_app",
+  "version": "1.0.0",
+  "description": "Aplicación de seguimiento de objetivos personales desarrollada en el marco del Taller de Desarrollo para Dispositivos Móviles de la carrera Analista en Tecnologías de la Información (ORT Uruguay).",
+  "homepage": "https://github.com/kolobits/Goalify_App#readme",
+  "bugs": {
+    "url": "https://github.com/kolobits/Goalify_App/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kolobits/Goalify_App.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.2"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.2"
+  }
+}
