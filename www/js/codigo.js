@@ -58,13 +58,17 @@ async function navegar(event) {
       REGISTRO.style.display = "block";
       break;
     case "/agregarEvaluacion":
+      PrenderLoading("Cargando...");
       cargarObjetivos();
       cargarEvaluaciones();
       AGREGAREVALUACION.style.display = "block";
+      ApagarLoading();
       break;
     case "/puntaje":
-      cargarPuntaje();
+      PrenderLoading("Cargando...");
       PUNTAJE.style.display = "block";
+      cargarPuntaje();
+      ApagarLoading();
       break;
     case "/mapa":
       MAPA.style.display = "block";
@@ -445,7 +449,7 @@ async function cargarEvaluaciones() {
     redirect: "follow",
   };
   try {
-    PrenderLoading("Cargando evaluaciones...");
+    // PrenderLoading("Cargando evaluaciones...");
     let url = `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`;
     let response = await fetch(url, requestOptions);
     let body = await response.json();
@@ -488,7 +492,7 @@ async function cargarEvaluaciones() {
       message: "No se pudo contactar con el servidor.",
     });
   }
-  ApagarLoading();
+  // ApagarLoading();
 }
 
 // ELIMINAR EVALUACIÓN
@@ -632,7 +636,7 @@ async function cargarPuntaje() {
   };
 
   try {
-    PrenderLoading("Cargando puntaje...")
+    // PrenderLoading("Cargando puntaje...")
     let response = await fetch(
       `${URL_BASE}evaluaciones.php?idUsuario=${idUsuario}`,
       requestOptions
@@ -686,7 +690,7 @@ async function cargarPuntaje() {
       message: "No se pudo contactar con el servidor.",
     });
   }
-  ApagarLoading()
+  // ApagarLoading()
 }
 
 // CARGAR USUARIOS POR PAÍS
